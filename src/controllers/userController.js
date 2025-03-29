@@ -1,14 +1,19 @@
 // src/controllers/userController.js
 const prisma = require("../config/prisma");
 
-// Update a user
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
   const { username, password, role } = req.body;
 
+  // Validate that role is provided
+  if (!role) {
+    return res.status(400).json({ error: "Role is required." });
+  }
+
   try {
     const updatedUser = await prisma.user.update({
-      where: { id: Number(id) },
+      // Pass the id as a string directly; do not convert to Number
+      where: { id: id },
       data: { username, password, role },
     });
     res.json(updatedUser);
@@ -18,13 +23,12 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-// Delete a user
 exports.deleteUser = async (req, res) => {
   const { id } = req.params;
-
   try {
     const deletedUser = await prisma.user.delete({
-      where: { id: Number(id) },
+      // Pass the id as a string directly
+      where: { id: id },
     });
     res.json(deletedUser);
   } catch (error) {

@@ -1,0 +1,93 @@
+------------------------------------------------------------
+OrderKo API Endpoints Reference
+
+Base URL:
+  http://your-api-url
+
+------------------------------------------------------------
+User Endpoints:
+
+1. Update a User:
+   - Method: PUT
+   - Endpoint: /users/:id
+   - Description: Updates a user's details (username, password, and role).
+   - Example:
+     curl -X PUT http://your-api-url/users/USER_ID \
+       -H "Content-Type: application/json" \
+       -d '{"username": "newUsername", "password": "newPassword", "role": "EMPLOYEE"}'
+
+2. Delete a User:
+   - Method: DELETE
+   - Endpoint: /users/:id
+   - Description: Deletes a user by ID.
+   - Example:
+     curl -X DELETE http://your-api-url/users/USER_ID
+
+------------------------------------------------------------
+Auth Endpoints:
+
+1. Sign In:
+   - Method: POST
+   - Endpoint: /auth/signin
+   - Description: Signs in a user by verifying username and password.
+   - Example:
+     curl -X POST http://your-api-url/auth/signin \
+       -H "Content-Type: application/json" \
+       -d '{"username": "yourUsername", "password": "yourPassword"}'
+
+------------------------------------------------------------
+Product Endpoints:
+
+1. Create a Product:
+   - Method: POST
+   - Endpoint: /products
+   - Description: Creates a new product with fields: name, imgUrl, price, and stock.
+   - Example:
+     curl -X POST http://your-api-url/products \
+       -H "Content-Type: application/json" \
+       -d '{"name": "Product Name", "imgUrl": "https://example.com/image.jpg", "price": 10.99, "stock": 100}'
+
+2. Update a Product:
+   - Method: PUT
+   - Endpoint: /products/:id
+   - Description: Updates product details by ID.
+   - Example:
+     curl -X PUT http://your-api-url/products/PRODUCT_ID \
+       -H "Content-Type: application/json" \
+       -d '{"name": "Updated Product", "imgUrl": "https://example.com/newimage.jpg", "price": 12.99, "stock": 80}'
+
+3. Delete a Product:
+   - Method: DELETE
+   - Endpoint: /products/:id
+   - Description: Deletes a product by ID.
+   - Example:
+     curl -X DELETE http://your-api-url/products/PRODUCT_ID
+
+4. Get All Products:
+   - Method: GET
+   - Endpoint: /products
+   - Description: Retrieves a list of all products.
+   - Example:
+     curl http://your-api-url/products
+
+------------------------------------------------------------
+Order Record Endpoints:
+
+1. Create an Order Record:
+   - Method: POST
+   - Endpoint: /orders
+   - Description: Creates an order record. Provide userId, productId, and count (server calculates totalAmount).
+   - Example:
+     curl -X POST http://your-api-url/orders \
+       -H "Content-Type: application/json" \
+       -d '{"userId": "USER_ID", "productId": "PRODUCT_ID", "count": 2}'
+
+2. Get All Order Records:
+   - Method: GET
+   - Endpoint: /orders
+   - Description: Retrieves all order records (admin summary).
+   - Example:
+     curl http://your-api-url/orders
+
+------------------------------------------------------------
+End of API Endpoints Reference
