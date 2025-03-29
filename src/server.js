@@ -2,18 +2,19 @@
 const express = require("express");
 const app = express();
 
-// Middleware to parse JSON bodies
 app.use(express.json());
 
 // Import routes
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 // Setup routes
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/orders", orderRoutes);
+app.use("/auth", authRoutes);
 
 // Default route
 app.get("/", (req, res) => {
