@@ -4,7 +4,6 @@ const prisma = require("../config/prisma");
 // Create a product
 exports.createProduct = async (req, res) => {
   const { name, imgUrl, price, stock } = req.body;
-
   try {
     const product = await prisma.product.create({
       data: { name, imgUrl, price, stock },
@@ -20,10 +19,10 @@ exports.createProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   const { id } = req.params;
   const { name, imgUrl, price, stock } = req.body;
-
   try {
+    // Do not convert id to Number since it's a string (cuid)
     const updatedProduct = await prisma.product.update({
-      where: { id: Number(id) },
+      where: { id: id },
       data: { name, imgUrl, price, stock },
     });
     res.json(updatedProduct);
@@ -36,10 +35,10 @@ exports.updateProduct = async (req, res) => {
 // Delete a product
 exports.deleteProduct = async (req, res) => {
   const { id } = req.params;
-
   try {
+    // Use the id as is
     const deletedProduct = await prisma.product.delete({
-      where: { id: Number(id) },
+      where: { id: id },
     });
     res.json(deletedProduct);
   } catch (error) {
