@@ -3,26 +3,33 @@ const prisma = require("../config/prisma");
 
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
-  const { username, password } = req.body;
+  const { username, password, role } = req.body;
 
-  // Build the update object conditionally.
-  const updateData = {};
-  if (username !== undefined) {
-    updateData.username = username;
-  }
-  if (password !== undefined) {
-    updateData.password = password;
-  }
+  // Log the incoming request details.
+  console.log("Received updateUser request with id:", id);
+  console.log("Request body:", req.body);
 
-  if (Object.keys(updateData).length === 0) {
-    return res.status(400).json({ error: "At least one field (username or password) must be provided for update." });
+  // Validate that all fields are provided.
+  if (!username || !password || !role) {
+    console.log("Missing required fields. Username, password, and role must be provided.");
+    return res.status(400).json({ error: "Username, password, and role must be provided." });
   }
 
   try {
+    // Check if the user exists
+    const existingUser = await prisma.user.findUnique({ where: { id } });
+    console.log("Existing user found:", existingUser);
+    if (!existingUser) {
+      console.log("User not found with id:", id);
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    // Update the user record with all fields.
     const updatedUser = await prisma.user.update({
-      where: { id: id },
-      data: updateData,
+      where: { id },
+      data: { username, password, role },
     });
+    console.log("User updated successfully:", updatedUser);
     res.json(updatedUser);
   } catch (error) {
     console.error("Error updating user:", error);
