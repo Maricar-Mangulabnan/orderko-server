@@ -32,11 +32,15 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-// Delete a product
+// Delete a product along with its order records
 exports.deleteProduct = async (req, res) => {
   const { id } = req.params;
   try {
-    // Use the id as is
+    // First delete all OrderRecord entries that reference this product
+    await prisma.orderRecord.deleteMany({
+      where: { productId: id },
+    });
+    // Now delete the product itself
     const deletedProduct = await prisma.product.delete({
       where: { id: id },
     });
