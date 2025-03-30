@@ -4,12 +4,6 @@ const prisma = require("../config/prisma");
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
   const { username, password, role } = req.body;
-
-  // Validate that role is provided
-  if (!role) {
-    return res.status(400).json({ error: "Role is required." });
-  }
-
   try {
     const updatedUser = await prisma.user.update({
       // Pass the id as a string directly; do not convert to Number
