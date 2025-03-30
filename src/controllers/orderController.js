@@ -39,10 +39,10 @@ exports.createOrder = async (req, res) => {
         },
       });
 
-      // Update product stock
+      // Update product stock using the decrement operator
       await tx.product.update({
         where: { id: productId },
-        data: { stock: product.stock - count },
+        data: { stock: { decrement: count } },
       });
 
       return newOrder;
