@@ -1,13 +1,17 @@
 // src/controllers/orderController.js
 const prisma = require("../config/prisma");
 
-// Create an order
+// Create an order and update product stock in a transaction
 exports.createOrder = async (req, res) => {
   // Expecting { userId, productId, count } in the request body
   const { userId, productId, count } = req.body;
 
+  if (!userId || !productId || !count) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
   try {
-    // Retrieve the product to get its price
+    // Retrieve the product to get its price and current stock
     const product = await prisma.product.findUnique({
       where: { id: productId },
     });
@@ -16,17 +20,32 @@ exports.createOrder = async (req, res) => {
       return res.status(404).json({ error: "Product not found" });
     }
 
+    // Check if enough stock is available
+    if (product.stock < count) {
+      return res.status(400).json({ error: "Not enough stock" });
+    }
+
     // Calculate total amount (price * count)
     const totalAmount = product.price * count;
 
-    // Create a new order record
-    const order = await prisma.orderRecord.create({
-      data: {
-        userId: userId,
-        productId: productId,
-        count,
-        totalAmount,
-      },
+    // Create order and update product stock in one transaction
+    const order = await prisma.$transaction(async (tx) => {
+      const newOrder = await tx.orderRecord.create({
+        data: {
+          userId: userId,
+          productId: productId,
+          count: count,
+          totalAmount: totalAmount,
+        },
+      });
+
+      // Update product stock
+      await tx.product.update({
+        where: { id: productId },
+        data: { stock: product.stock - count },
+      });
+
+      return newOrder;
     });
 
     res.json(order);
