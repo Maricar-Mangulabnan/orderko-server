@@ -3,12 +3,25 @@ const prisma = require("../config/prisma");
 
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
-  const { username, password, role } = req.body;
+  const { username, password } = req.body;
+
+  // Build the update object conditionally.
+  const updateData = {};
+  if (username !== undefined) {
+    updateData.username = username;
+  }
+  if (password !== undefined) {
+    updateData.password = password;
+  }
+
+  if (Object.keys(updateData).length === 0) {
+    return res.status(400).json({ error: "At least one field (username or password) must be provided for update." });
+  }
+
   try {
     const updatedUser = await prisma.user.update({
-      // Pass the id as a string directly; do not convert to Number
       where: { id: id },
-      data: { username, password, role },
+      data: updateData,
     });
     res.json(updatedUser);
   } catch (error) {
