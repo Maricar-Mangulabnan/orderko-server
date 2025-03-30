@@ -9,7 +9,7 @@ exports.createOrder = async (req, res) => {
   try {
     // Retrieve the product to get its price
     const product = await prisma.product.findUnique({
-      where: { id: Number(productId) },
+      where: { id: productId },
     });
 
     if (!product) {
@@ -22,8 +22,8 @@ exports.createOrder = async (req, res) => {
     // Create a new order record
     const order = await prisma.orderRecord.create({
       data: {
-        userId: Number(userId),
-        productId: Number(productId),
+        userId: userId,
+        productId: productId,
         count,
         totalAmount,
       },

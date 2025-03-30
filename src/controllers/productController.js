@@ -1,4 +1,3 @@
-// src/controllers/productController.js
 const prisma = require("../config/prisma");
 
 // Create a product
@@ -20,7 +19,7 @@ exports.updateProduct = async (req, res) => {
   const { id } = req.params;
   const { name, imgUrl, price, stock } = req.body;
   try {
-    // Do not convert id to Number since it's a string (cuid)
+    // Using id as a string because we're using cuid.
     const updatedProduct = await prisma.product.update({
       where: { id: id },
       data: { name, imgUrl, price, stock },
@@ -36,11 +35,11 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
   const { id } = req.params;
   try {
-    // First delete all OrderRecord entries that reference this product
+    // Delete related order records first to avoid foreign key constraint issues.
     await prisma.orderRecord.deleteMany({
       where: { productId: id },
     });
-    // Now delete the product itself
+    // Now delete the product.
     const deletedProduct = await prisma.product.delete({
       where: { id: id },
     });
